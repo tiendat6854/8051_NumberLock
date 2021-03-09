@@ -1,0 +1,135 @@
+C51 COMPILER V9.60.0.0   MAIN                                                              02/26/2021 05:48:32 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN main.OBJ
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND TABS(2)
+
+line level    source
+
+   1          #include"..\lib\main.h"
+   2          #include"..\lib\LCD4bit.h"
+   3          
+   4          sbit Relay = P3^6;
+   5          sbit Buzz =P3^7;
+   6          unsigned char code keypad[4][3]={'1','2','3','4','5','6','7','8','9','*','0','#'};
+   7          unsigned char pass[6]={'1','4','1','0','0','0'};
+   8          unsigned char check[6];
+   9          //----------------------------------------------------------------------------------
+  10          
+  11          void warning()
+  12          {
+  13   1          unsigned char count = 10;
+  14   1          while(count--)
+  15   1          {
+  16   2               Buzz= 1;
+  17   2               Delay_ms(200);
+  18   2               Buzz =0;
+  19   2               Delay_ms(200);
+  20   2          }
+  21   1      }
+  22          unsigned char quetphim()
+  23          {
+  24   1         unsigned char c, r;
+  25   1         P1=0x0F;
+  26   1         Delay_us(2);
+  27   1         if(P1!=0x0F)   //Ðieu kien này có nghia gì?
+  28   1         {
+  29   2            for(c=0;c<3;c++)                     //Tien hành quét tung cot
+  30   2            {
+  31   3               P1=~(0x01<<(4+c));
+  32   3               Delay_ms(1);
+  33   3               for(r=0;r<4;r++)          //Tien hành kiem tra tung hàng
+  34   3               {
+  35   4                  if((P1&(0x01<<r))==0)
+  36   4                  {
+  37   5                     while((P1&(0x01<<r))==0);
+  38   5                     return keypad[r][c]; //Hàm này làm gì?
+  39   5                  }
+  40   4               }
+  41   3            }
+  42   2         }
+  43   1         return 0;
+  44   1      }
+  45          unsigned char sosanh(unsigned char a[], unsigned char b[])
+  46          {
+  47   1         unsigned char i;
+  48   1         for(i=0;i<6;i++)
+  49   1         {
+  50   2            if(a[i]!=b[i]) return 0;
+  51   2         }
+  52   1         return 1;
+  53   1      }
+  54          void main()
+  55          {
+C51 COMPILER V9.60.0.0   MAIN                                                              02/26/2021 05:48:32 PAGE 2   
+
+  56   1         unsigned char key=0,i=0,j=0;
+  57   1         LCD_Init();
+  58   1         Relay=0;
+  59   1         Buzz = 0;
+  60   1      
+  61   1         while(1)
+  62   1         {
+  63   2            LCD_Clear();
+  64   2            LCD_Gotoxy(0,0);
+  65   2            LCD_Puts("ENTER PASSWORD:");
+  66   2            LCD_Gotoxy(0,1);
+  67   2            i=0;
+  68   2            while(i<6)
+  69   2            {
+  70   3                key=quetphim();
+  71   3                if(key)
+  72   3                {
+  73   4                   LCD_Gotoxy(i,1);
+  74   4                   LCD_PutChar(key);
+  75   4                   check[i]=key;
+  76   4                   key=0;
+  77   4                   i++;
+  78   4                 }
+  79   3             }
+  80   2      
+  81   2             if(sosanh(pass,check))
+  82   2             {
+  83   3                LCD_Gotoxy(0,1);
+  84   3                LCD_Puts("TRUE...");
+  85   3                Relay=1;
+  86   3                Delay_ms(3000);
+  87   3                Relay=0;
+  88   3                j=0;
+  89   3             }
+  90   2             else
+  91   2             {
+  92   3                j++;
+  93   3                if(j>=3)
+  94   3                {
+  95   4                    LCD_Gotoxy(0,1);
+  96   4                    LCD_Puts("Warning...");
+  97   4                    warning();
+  98   4                    j=0;
+  99   4                }
+ 100   3                else
+ 101   3                {
+ 102   4                    LCD_Gotoxy(0,1);
+ 103   4                    LCD_Puts("Error...");
+ 104   4                    Delay_ms(500);
+ 105   4                }
+ 106   3             }
+ 107   2        }
+ 108   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    680    ----
+   CONSTANT SIZE    =     56    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     12       9
+   IDATA SIZE       =   ----    ----
+C51 COMPILER V9.60.0.0   MAIN                                                              02/26/2021 05:48:32 PAGE 3   
+
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
