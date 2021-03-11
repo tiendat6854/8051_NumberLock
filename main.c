@@ -26,11 +26,11 @@ unsigned char quetphim()
    Delay_us(2);
    if(P1!=0x0F)   //Ðieu kien này có nghia gì?
    {
-      for(c=0;c<3;c++)                     //Tien hành quét tung cot
+      for(c=0;c<3;c++)                     //Tien hanh quet tung cot
       {
          P1=~(0x01<<(4+c));
          Delay_ms(1);
-         for(r=0;r<4;r++)          //Tien hành kiem tra tung hàng
+         for(r=0;r<4;r++)          //Tien hanh kiem tra tung hang
          {
             if((P1&(0x01<<r))==0)
             {
